@@ -1,0 +1,120 @@
+<!-- 
+ MIT License
+
+ Copyright (c) 2017 HyperdriveMe, Inc.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Map | Hyperdrive</title>
+<script src='https://api.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v0.29.0/mapbox-gl.css' rel='stylesheet' />
+<script src='https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mootools/1.3.2/mootools-yui-compressed.min.js" ></script>
+
+<script type="text/javascript">
+mapboxgl.accessToken = '< your mapbox token >';
+var route = [[-122.073, 37.37992], [-122.0729, 37.38032], [-122.0707, 37.38274], [-122.0678, 37.38418], [-122.0675, 37.38424], [-122.0671, 37.38403], [-122.0672, 37.38358], [-122.0675, 37.38345], [-122.0679, 37.38354], [-122.0683, 37.38482], [-122.0685, 37.38846], [-122.068, 37.39095], [-122.0685, 37.39125], [-122.0704, 37.39159], [-122.0743, 37.39313], [-122.0741, 37.39344], [-122.0749, 37.39383], [-122.0748, 37.39379]]
+var map;
+window.addEvent('domready', function(){
+	map = new mapboxgl.Map({
+		container: $$('div.map')[0],
+		style: 'mapbox://styles/mapbox/dark-v9',
+		pitch: 45,
+		center: route[0],
+		zoom: 9
+	});
+	map.dragPan.disable();
+	map.scrollZoom.disable();
+
+	map.on('load', function(){
+		var polyline = {
+			"type": "Feature",
+			"properties": {},
+			"geometry": {
+				"type": "LineString",
+				"coordinates": route
+			}
+		}
+
+		map.addSource("route", {
+			"type": "geojson",
+			"data": polyline
+		});
+
+		map.addLayer({
+			"id": "route",
+			"type": "line",
+			"source": "route",
+			"layout": {
+				"line-join": "round",
+				"line-cap": "round"
+			},
+			"paint": {
+				"line-color": "#00ADEE",
+				"line-width": 6
+			}
+		});
+		
+		var el = new Element('div');
+		el.setStyles({
+			width: 12,
+			height : 10,
+			background:'rgba(0,0,0,.5)',
+			'border-radius': '50%',
+			'-moz-border-radius': '50%',
+			'-webkit-border-radius': '50%',
+			border : "3px solid #fff"
+		});
+
+		mapMarker = new mapboxgl.Marker(el, {
+			offset: [-12, -8]
+		})
+			.setLngLat(route[0])
+			.addTo(map);
+
+		var bbox = turf.extent({
+			"type": "FeatureCollection",
+			"features": [polyline]
+		});
+
+		map.fitBounds(bbox, {padding: 20});
+	});
+});
+</script>
+
+<style>
+div.map, 
+body,
+html
+{
+	width:100%;
+	height:100%;
+}
+
+</style>
+</head>
+<body>
+	<div class="map"></li>
+</body>
+</html>

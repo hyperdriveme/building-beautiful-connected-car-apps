@@ -1,0 +1,70 @@
+<!-- 
+ MIT License
+
+ Copyright (c) 2017 HyperdriveMe, Inc.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ -->
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Hyperdrive | Real-Time/Sockets</title>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mootools/1.3.2/mootools-yui-compressed.min.js" ></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mootools-more/1.4.0.1/mootools-more-yui-compressed.min.js" ></script>
+<script src="http://cdn.pubnub.com/socket.io.min.js"></script>
+
+<script>
+var socket;
+window.addEvent('load', function(e){
+	var pubnub_setup = {
+		channel       : '< pubnub channel >',
+		publish_key   : '< pubnub publish key >',
+		subscribe_key : '< pubnub subscribe key >'
+	};
+	socket = io.connect( 'http://pubsub.pubnub.com', pubnub_setup );
+
+	socket.on( 'connect', function() {
+		console.log('Connection Established! Ready to send/receive data!');
+		socket.send('my message here');
+		socket.send(1234567);
+		socket.send([1,2,3,4,5]);
+		socket.send({ apples : 'bananas' });
+	} );
+
+	socket.on( 'message', function(message) {
+		console.log(message);
+	} );
+
+	socket.on( 'disconnect', function() {
+		console.log('my connection dropped');
+	} );
+
+	// Extra event in Socket.IO provided by PubNub
+	socket.on( 'reconnect', function() {
+		console.log('my connection has been restored!');
+	} );
+});
+</script>
+<head>
+<title>test</title></head>
+<body>
+</body>
+</html>
